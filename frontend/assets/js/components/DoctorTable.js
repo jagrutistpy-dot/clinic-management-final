@@ -43,4 +43,8 @@ window.editDoctor = id => {
   document.getElementById("schedule").value = doctor.schedule;
   document.getElementById("contact").value = doctor.contact;
 
-  document.getElementById("addDoctorBtn").style.display = "non
+  document.getElementById("addDoctorBtn").style.display = "none";
+  document.getElementById("updateDoctorBtn").style.display = "inline";
+
+  window.editingDoctorId = id;
+};

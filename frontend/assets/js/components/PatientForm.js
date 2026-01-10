@@ -21,4 +21,8 @@ export function fillForm(patient) {
   $("contact").value = patient.contact;
 
   // Change the submit button text to "Update Patient"
-  $("submitBtn").textCon
+  $("submitBtn").textContent = "Update Patient";
+
+  // Show the "Cancel" button, allowing the user to exit 'edit' mode
+  $("cancelBtn").style.display = "inline-block";
+}

@@ -1,17 +1,29 @@
-import { addBill } from "../services/billingService.js";
+// billingForm.js
 
-document.addEventListener("submit", e => {
-  if (e.target.id === "billing-form") {
-    e.preventDefault();
+import { $ } from "../utils/dom.js";
 
-    addBill({
-      id: Date.now(),
-      patient_id: patient.value,
-      doctor_id: doctor.value,
-      amount: Number(amount.value),
-      date: new Date().toLocaleDateString()
-    });
+// Resets the billing form to its default state (create mode)
+export function resetForm() {
+  // Reset all form fields
+  $("billingForm").reset();
 
-    location.reload();
-  }
-});
+  // Reset submit button text
+  $("submitBtn").textContent = "Add Bill";
+
+  // Hide cancel button
+  $("cancelBtn").style.display = "none";
+}
+
+// Fills the billing form with existing bill data (edit mode)
+export function fillForm(bill) {
+  $("patientId").value = bill.patientId;
+  $("doctorAttended").value = bill.doctorAttended;
+  $("amount").value = bill.amount;
+  $("billDate").value = bill.billDate;
+
+  // Update submit button text
+  $("submitBtn").textContent = "Update Bill";
+
+  // Show cancel button
+  $("cancelBtn").style.display = "inline-block";
+}

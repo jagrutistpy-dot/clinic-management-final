@@ -1,23 +1,65 @@
-<div class="card">
-  <h2>Doctors</h2>
+<div class="max-w-3xl mx-auto p-6">
 
-  <input id="doctor-name" placeholder="Doctor Name">
-  <input id="doctor-specialization" placeholder="Specialization">
-  <input id="doctor-schedule" placeholder="Schedule (e.g. Mon–Fri 9AM–5PM)">
-  <input id="doctor-contact" placeholder="Contact">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-3xl font-bold">Doctor Management System</h1>
+    <a href="/home" data-link class="text-sm text-blue-600 underline">← Back to Home</a>
+  </div>
 
-  <button id="add-doctor-btn">Add Doctor</button>
+  <!-- Add / Edit Doctor Form -->
+  <div class="bg-white p-5 rounded shadow mb-8">
+    <h2 class="font-semibold mb-3 text-lg">Add New Doctor</h2>
+    <form id="doctorForm" class="space-y-3">
+      <input type="text" id="name" placeholder="Name" required class="w-full border rounded px-3 py-2">
+      <input type="text" id="specialization" placeholder="Specialization" required class="w-full border rounded px-3 py-2">
+      <input type="text" id="schedule" placeholder="Schedule" required class="w-full border rounded px-3 py-2">
+      <input type="text" id="contact" placeholder="Contact" required class="w-full border rounded px-3 py-2">
 
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Specialization</th>
-        <th>Schedule</th>
-        <th>Contact</th>
-      </tr>
-    </thead>
-    <tbody id="doctor-table-body"></tbody>
-  </table>
+      <div class="flex space-x-2">
+        <button type="submit" id="submitBtn"
+          class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded">
+          Add Doctor
+        </button>
+
+        <button type="button" id="cancelBtn"
+          class="flex-1 bg-gray-400 hover:bg-gray-500 text-white py-2 rounded hidden">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Doctors Table -->
+  <div class="bg-white p-5 rounded shadow">
+    <h2 class="font-semibold mb-4 text-lg">All Doctors</h2>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="text-center py-4">
+      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
+    </div>
+
+    <!-- Doctors Table Container -->
+    <div id="doctorsTableContainer" class="hidden overflow-x-auto">
+      <table class="min-w-full text-left border">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="px-3 py-2">ID</th>
+            <th class="px-3 py-2">Name</th>
+            <th class="px-3 py-2">Specialization</th>
+            <th class="px-3 py-2">Schedule</th>
+            <th class="px-3 py-2">Contact</th>
+            <th class="px-3 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="doctorsTableBody"></tbody>
+      </table>
+
+      <p id="noDoctors" class="text-center text-gray-500 mt-3 hidden">
+        No doctors found. Add one using the form above.
+      </p>
+    </div>
+  </div>
+
+  <!-- Alert container -->
+  <div id="alertContainer" class="fixed top-4 right-4 space-y-2 z-50"></div>
 </div>
 

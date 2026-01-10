@@ -1,22 +1,64 @@
-<div class="card">
-  <h2>Billing</h2>
+<div class="max-w-3xl mx-auto p-6">
 
-  <input id="billing-patient-id" placeholder="Patient ID">
-  <input id="billing-doctor" placeholder="Doctor Attender">
-  <input id="billing-amount" type="number" placeholder="Amount">
-  <input id="billing-date" type="date" placeholder="Bill Date">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-3xl font-bold">Billing Management System</h1>
+    <a href="/home" data-link class="text-sm text-blue-600 underline">← Back to Home</a>
+  </div>
 
-  <button id="add-billing-btn">Add Bill</button>
+  <!-- Add / Edit Billing Form -->
+  <div class="bg-white p-5 rounded shadow mb-8">
+    <h2 class="font-semibold mb-3 text-lg">Add New Bill</h2>
+    <form id="billingForm" class="space-y-3">
+      <input type="text" id="patientId" placeholder="Patient ID" required class="w-full border rounded px-3 py-2">
+      <input type="text" id="doctorAttended" placeholder="Doctor Attended" required class="w-full border rounded px-3 py-2">
+      <input type="number" id="amount" placeholder="Amount" required class="w-full border rounded px-3 py-2">
+      <input type="date" id="billDate" placeholder="Bill Date" required class="w-full border rounded px-3 py-2">
 
-  <table>
-    <thead>
-      <tr>
-        <th>Patient ID</th>
-        <th>Doctor Attender</th>
-        <th>Amount</th>
-        <th>Bill Date</th>
-      </tr>
-    </thead>
-    <tbody id="billing-table-body"></tbody>
-  </table>
+      <div class="flex space-x-2">
+        <button type="submit" id="submitBtn"
+          class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded">
+          Add Bill
+        </button>
+
+        <button type="button" id="cancelBtn"
+          class="flex-1 bg-gray-400 hover:bg-gray-500 text-white py-2 rounded hidden">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Billing Table -->
+  <div class="bg-white p-5 rounded shadow">
+    <h2 class="font-semibold mb-4 text-lg">All Bills</h2>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="text-center py-4">
+      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
+    </div>
+
+    <!-- Bills Table Container -->
+    <div id="billingTableContainer" class="hidden overflow-x-auto">
+      <table class="min-w-full text-left border">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="px-3 py-2">ID</th>
+            <th class="px-3 py-2">Patient ID</th>
+            <th class="px-3 py-2">Doctor Attended</th>
+            <th class="px-3 py-2">Amount</th>
+            <th class="px-3 py-2">Bill Date</th>
+            <th class="px-3 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="billingTableBody"></tbody>
+      </table>
+
+      <p id="noBills" class="text-center text-gray-500 mt-3 hidden">
+        No bills found. Add one using the form above.
+      </p>
+    </div>
+  </div>
+
+  <!-- Alert container -->
+  <div id="alertContainer" class="fixed top-4 right-4 space-y-2 z-50"></div>
 </div>

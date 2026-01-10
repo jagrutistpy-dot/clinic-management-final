@@ -7,20 +7,6 @@ export async function initHomeController() {
   const bills = await getBills();
   const patients = await getPatients();
 
-  let html = `
-    <div class="card">
-      <h2>Patient Billing Summary</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Patient Name</th>
-            <th>Age</th>
-            <th>Total Bill</th>
-          </tr>
-        </thead>
-        <tbody>
-  `;
-
   patients.forEach(p => {
     const total = bills
       .filter(b => b.patient_id == p.id)

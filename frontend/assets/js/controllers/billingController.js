@@ -1,50 +1,104 @@
-import { getPatients } from "../services/patientService.js";
-import { getBills, createBill } from "../services/billingService.js";
+// billingController.js
 
-export async function initBillingController() {
-  const patientSelect = document.getElementById("bill-patient");
-  const btn = document.getElementById("add-bill-btn");
+import {
+  getAllBills,
+  getBillById,
+  createBill,
+  updateBill,
+  deleteBill
+} from "../services/billingService.js";
 
-  // Load patients
-  const patients = await getPatients();
-  patientSelect.innerHTML = "";
+import { showAlert } from "../components/Alert.js";
+import { renderBillingTable } from "../components/BillingTable.js";
+import { resetForm, fillForm } from "../components/BillingForm.js";
 
-  patients.forEach(p => {
-    const option = document.createElement("option");
-    option.value = p.id;
-    option.textContent = p.name;
-    patientSelect.appendChild(option);
-  });
+import { setState, getState } from "../state/store.js";
+import { $ } from "../utils/dom.js";
 
-  // Add bill
-  btn.addEventListener("click", async () => {
+// Initialize billing controller
+export function initBillingController() {
+  // Load all billing records on page load
+  loadBills();
+
+  // Handle form submission
+  $("billingForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
     const data = {
-      patient_id: patientSelect.value,
-      doctor_attended: document.getElementById("bill-doctor").value,
-      amount: document.getElementById("bill-amount").value,
-      bill_date: document.getElementById("bill-date").value
+      patientId: $("patientId").value.trim(),
+      doctorAttended: $("doctorAttended").value.trim(),
+      amount: $("amount").value.trim(),
+      billDate: $("billDate").value.trim()
     };
 
-    await createBill(data);
-    loadBills();
+    const { editingId } = getState();
+
+    editingId
+      ? await updateExistingBill(editingId, data)
+      : await createNewBill(data);
   });
 
-  loadBills();
+  // Handle cancel button
+  $("cancelBtn").addEventListener("click", () => {
+    setState({ editingId: null });
+    resetForm();
+  });
 }
 
-async function loadBills() {
-  const bills = await getBills();
-  const table = document.getElementById("billing-table");
-  table.innerHTML = "";
+// Load all billing records
+export async function loadBills() {
+  const spinner = $("loadingSpinner");
+  const table = $("billingTableContainer");
 
-  bills.forEach(b => {
-    table.innerHTML += `
-      <tr>
-        <td>${b.patient_id}</td>
-        <td>${b.doctor_attended}</td>
-        <td>${b.amount}</td>
-        <td>${b.bill_date}</td>
-      </tr>
-    `;
-  });
+  spinner.style.display = "block";
+  table.style.display = "none";
+
+  const bills = await getAllBills();
+  setState({ bills });
+  renderBillingTable(bills);
+
+  spinner.style.display = "none";
+  table.style.display = "block";
+}
+
+// Create new bill
+export async function createNewBill(data) {
+  const res = await createBill(data);
+  if (res.ok) {
+    showAlert("Bill created successfully!");
+    resetForm();
+    loadBills();
+  }
+}
+
+// Edit bill
+export async function editBill(id) {
+  const bill = await getBillById(id);
+
+  setState({ editingId: id });
+  fillForm(bill);
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Update bill
+export async function updateExistingBill(id, data) {
+  const res = await updateBill(id, data);
+  if (res.ok) {
+    showAlert("Bill updated successfully!");
+    resetForm();
+    setState({ editingId: null });
+    loadBills();
+  }
+}
+
+// Delete bill
+export async function deleteBillAction(id) {
+  if (!confirm("Delete this bill?")) return;
+
+  const res = await deleteBill(id);
+  if (res.ok) {
+    showAlert("Bill deleted!");
+    loadBills();
+  }
 }

@@ -1,28 +1,69 @@
-import { loadComponent } from "../utils/loadComponent.js";
-import { initPatientController } from "../controllers/patientController.js";
+// viewrouter.js
+
 import { initDoctorController } from "../controllers/doctorController.js";
+import { initPatientController } from "../controllers/patientController.js";
 import { initBillingController } from "../controllers/billingController.js";
-import { initHomeController } from "../controllers/homeController.js";
 
-const routes = {
-  "/": { page: "/frontend/pages/home.html", init: initHomeController },
-  "/home": { page: "/frontend/pages/home.html", init: initHomeController },
-  "/patients": { page: "/frontend/pages/patients.html", init: initPatientController },
-  "/doctors": { page: "/frontend/pages/doctors.html", init: initDoctorController },
-  "/billing": { page: "/frontend/pages/billing.html", init: initBillingController }
-};
+async function loadView(path) {
+  const res = await fetch(path);
 
-export async function router() {
-  const path = location.hash.replace("#", "") || "/";
-  const route = routes[path];
-
-  if (!route) {
-    await loadComponent("#app", "/frontend/pages/404.html");
+  // If the view file is missing, show 404 view
+  if (!res.ok) {
+    const fallback = await fetch("/frontend/pages/404.html").then((r) => r.text());
+    document.querySelector("#app").innerHTML = fallback;
     return;
   }
 
-  await loadComponent("#app", route.page);
-  if (route.init) route.init();
+  const html = await res.text();
+  document.querySelector("#app").innerHTML = html;
+
+  // Re-render Mermaid diagrams if available
+  if (window.mermaid) {
+    try {
+      await window.mermaid.run({ querySelector: "#app .mermaid" });
+    } catch (e) {
+      console.warn("Mermaid render skipped:", e);
+    }
+  }
 }
 
-window.addEventListener("hashchange", router);
+export async function router() {
+  // Normalize path: remove trailing slash (except "/")
+  let path = window.location.pathname;
+  if (path.length > 1) path = path.replace(/\/$/, "");
+
+  if (path === "/" || path === "/home") {
+    await loadView("/frontend/pages/home.html");
+
+  } else if (path === "/doctors") {
+    await loadView("/frontend/pages/doctors.html");
+    initDoctorController();
+
+  } else if (path === "/patients") {
+    await loadView("/frontend/pages/patients.html");
+    initPatientController();
+
+  } else if (path === "/billing") {
+    await loadView("/frontend/pages/billing.html");
+    initBillingController();
+
+  } else if (path === "/docs/flow") {
+    await loadView("/frontend/pages/flow.html");
+
+  } else {
+    await loadView("/frontend/pages/404.html");
+  }
+}
+
+export function initRouterEvents() {
+  document.addEventListener("click", (e) => {
+    const link = e.target.closest("[data-link]");
+    if (!link) return;
+
+    e.preventDefault();
+    history.pushState(null, "", link.getAttribute("href"));
+    router();
+  });
+
+  window.addEventListener("popstate", router);
+}

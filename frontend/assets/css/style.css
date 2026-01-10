@@ -1,0 +1,99 @@
+:root {
+  --pink: #fde2e4;
+  --lavender: #eae4f7;
+  --purple: #e0c3fc;
+  --blue: #dbeafe;
+  --green: #dcfce7;
+  --text: #374151;
+  --card: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, var(--pink), var(--lavender));
+  color: var(--text);
+}
+
+/* Header */
+header {
+  background: var(--purple);
+  padding: 1rem 2rem;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+/* Navigation */
+nav {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 2rem;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  background: var(--blue);
+  color: #1e3a8a;
+  font-weight: 500;
+}
+
+nav a:hover {
+  background: var(--green);
+}
+
+/* Page Container */
+.container {
+  padding: 2rem;
+}
+
+/* Cards */
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  margin-bottom: 1.5rem;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: var(--lavender);
+  padding: 0.7rem;
+}
+
+td {
+  padding: 0.6rem;
+  border-bottom: 1px solid #eee;
+}
+
+/* Buttons */
+button {
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--purple);
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+/* Inputs */
+input {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+}

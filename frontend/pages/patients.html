@@ -1,69 +1,91 @@
-<div class="max-w-3xl mx-auto p-6">
+<div class="max-w-4xl mx-auto p-6">
 
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-3xl font-bold">Patient Management System</h1>
-    <a href="/home" data-link class="text-sm text-blue-600 underline">← Back to Home</a>
+    <h1 class="text-3xl font-bold text-gray-800">Patient Management</h1>
+    <a href="/home" data-link class="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded transition">← Back to Home</a>
   </div>
 
-  <!-- Add / Edit Patient Form -->
-  <div class="bg-white p-5 rounded shadow mb-8">
-    <h2 class="font-semibold mb-3 text-lg">Add New Patient</h2>
-    <form id="patientForm" class="space-y-3">
-      <input type="text" id="name" placeholder="Name" required class="w-full border rounded px-3 py-2">
-      <input type="number" id="age" placeholder="Age" required class="w-full border rounded px-3 py-2">
-      <select id="gender" required class="w-full border rounded px-3 py-2">
-        <option value="" disabled selected>Select Gender</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Other">Other</option>
-      </select>
-      <input type="text" id="contact" placeholder="Contact" required class="w-full border rounded px-3 py-2">
+  <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-100">
+    <h2 id="formTitle" class="font-semibold mb-4 text-lg text-indigo-700">Add New Patient</h2>
+    <form id="patientForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      
+      <div class="space-y-1">
+        <label class="text-xs font-bold uppercase text-gray-500">Full Name</label>
+        <input type="text" id="name" placeholder="Enter name" required class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 outline-none">
+      </div>
 
-      <div class="flex space-x-2">
-        <button type="submit" id="submitBtn"
-          class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded">
+      <div class="space-y-1">
+        <label class="text-xs font-bold uppercase text-gray-500">Age</label>
+        <input type="number" id="age" placeholder="Age" required class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 outline-none">
+      </div>
+
+      <div class="space-y-1">
+        <label class="text-xs font-bold uppercase text-gray-500">Gender</label>
+        <select id="gender" required class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 outline-none">
+          <option value="" disabled selected>Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="space-y-1">
+        <label class="text-xs font-bold uppercase text-gray-500">Contact Number</label>
+        <input type="text" id="contact" placeholder="Contact number" required class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 outline-none">
+      </div>
+
+      <div class="space-y-1 md:col-span-2">
+        <label class="text-xs font-bold uppercase text-gray-500">Assigned Doctor</label>
+        <select id="assignedDoctor" required class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 outline-none bg-blue-50">
+          <option value="" disabled selected>Loading doctors...</option>
+        </select>
+      </div>
+
+      <div class="flex space-x-2 md:col-span-2 pt-2">
+        <button type="submit" id="submitBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg transition shadow-sm">
           Add Patient
         </button>
 
-        <button type="button" id="cancelBtn"
-          class="flex-1 bg-gray-400 hover:bg-gray-500 text-white py-2 rounded hidden">
+        <button type="button" id="cancelBtn" class="flex-1 bg-gray-400 hover:bg-gray-500 text-white font-medium py-2 rounded-lg hidden transition">
           Cancel
         </button>
       </div>
     </form>
   </div>
 
-  <!-- Patients Table -->
-  <div class="bg-white p-5 rounded shadow">
-    <h2 class="font-semibold mb-4 text-lg">All Patients</h2>
-
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="text-center py-4">
-      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
+  <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+    <div class="p-5 border-b border-gray-100 bg-gray-50">
+      <h2 class="font-semibold text-lg text-gray-700">Patient Directory</h2>
     </div>
 
-    <!-- Patients Table Container -->
-    <div id="patientsTableContainer" class="hidden overflow-x-auto">
-      <table class="min-w-full text-left border">
-        <thead class="bg-gray-200">
-          <tr>
-            <th class="px-3 py-2">ID</th>
-            <th class="px-3 py-2">Name</th>
-            <th class="px-3 py-2">Age</th>
-            <th class="px-3 py-2">Gender</th>
-            <th class="px-3 py-2">Contact</th>
-            <th class="px-3 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="patientsTableBody"></tbody>
-      </table>
+    <div id="loadingSpinner" class="text-center py-10">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
+      <p class="text-gray-500 mt-2 text-sm">Fetching patient records...</p>
+    </div>
 
-      <p id="noPatients" class="text-center text-gray-500 mt-3 hidden">
-        No patients found. Add one using the form above.
+    <div id="patientsTableContainer" class="hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-left">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 text-sm uppercase">
+              <th class="px-4 py-3 font-bold">ID</th>
+              <th class="px-4 py-3 font-bold">Patient Details</th>
+              <th class="px-4 py-3 font-bold">Gender</th>
+              <th class="px-4 py-3 font-bold">Contact</th>
+              <th class="px-4 py-3 font-bold">Assigned Doctor</th>
+              <th class="px-4 py-3 font-bold">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="patientsTableBody" class="divide-y divide-gray-100">
+            </tbody>
+        </table>
+      </div>
+
+      <p id="noPatients" class="text-center text-gray-500 py-10 hidden">
+        No patients found in the system.
       </p>
     </div>
   </div>
 
-  <!-- Alert container -->
   <div id="alertContainer" class="fixed top-4 right-4 space-y-2 z-50"></div>
 </div>

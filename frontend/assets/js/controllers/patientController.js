@@ -1,104 +1,105 @@
-// patientController.js
-
-import {
-  getAllPatients,
-  getPatientById,
-  createPatient,
-  updatePatient,
-  deletePatient
+// frontend/assets/js/controllers/patientController.js
+import { 
+    getAllPatients, getPatientById, createPatient, updatePatient, deletePatient 
 } from "../services/patientService.js";
-
+import { getAllDoctors } from "../services/doctorService.js";
 import { showAlert } from "../components/Alert.js";
 import { renderPatientTable } from "../components/PatientTable.js";
 import { resetForm, fillForm } from "../components/PatientForm.js";
-
 import { setState, getState } from "../state/store.js";
 import { $ } from "../utils/dom.js";
 
-// Initialize patient controller
-export function initPatientController() {
-  // Load patients on page load
-  loadPatients();
+export async function initPatientController() {
+    await loadInitialPatientData();
 
-  // Handle form submission
-  $("patientForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+    // Use onsubmit to ensure clean event handling
+    $("patientForm").onsubmit = async (e) => {
+        e.preventDefault();
+        
+        const data = {
+            name: $("name").value.trim(),
+            age: parseInt($("age").value.trim()),
+            gender: $("gender").value,
+            contact: $("contact").value.trim(),
+            assigned_doctor: $("assignedDoctor").value 
+        };
 
-    const data = {
-      name: $("name").value.trim(),
-      age: $("age").value.trim(),
-      gender: $("gender").value.trim(),
-      contact: $("contact").value.trim()
+        const { editingId } = getState();
+        
+        try {
+            const res = editingId 
+                ? await updatePatient(editingId, data) 
+                : await createPatient(data);
+
+            if (res && res.ok) {
+                showAlert(editingId ? "Patient updated successfully!" : "Patient added successfully!");
+                finishPatientAction();
+            } else {
+                showAlert("Failed to save patient.", "error");
+            }
+        } catch (error) {
+            console.error("Submission Error:", error);
+            showAlert("A system error occurred.", "error");
+        }
     };
 
-    const { editingId } = getState();
-
-    editingId
-      ? await updateExistingPatient(editingId, data)
-      : await createNewPatient(data);
-  });
-
-  // Handle cancel button
-  $("cancelBtn").addEventListener("click", () => {
-    setState({ editingId: null });
-    resetForm();
-  });
+    if ($("cancelBtn")) {
+        $("cancelBtn").onclick = () => {
+            finishPatientAction();
+        };
+    }
 }
 
-// Load all patients
+async function loadInitialPatientData() {
+    try {
+        const doctors = await getAllDoctors();
+        const docSelect = $("assignedDoctor");
+        if (docSelect) {
+            docSelect.innerHTML = '<option value="" disabled selected>Select Attending Doctor</option>';
+            doctors.forEach(doc => {
+                const option = document.createElement("option");
+                option.value = doc.name; 
+                option.textContent = `${doc.name} (${doc.specialization})`;
+                docSelect.appendChild(option);
+            });
+        }
+        await loadPatients();
+    } catch (error) {
+        console.error("Initialization Error:", error);
+    }
+}
+
 export async function loadPatients() {
-  const spinner = $("loadingSpinner");
-  const table = $("patientsTableContainer");
-
-  spinner.style.display = "block";
-  table.style.display = "none";
-
-  const patients = await getAllPatients();
-  setState({ patients });
-  renderPatientTable(patients);
-
-  spinner.style.display = "none";
-  table.style.display = "block";
+    const patients = await getAllPatients();
+    setState({ patients });
+    renderPatientTable(patients);
+    if ($("loadingSpinner")) $("loadingSpinner").style.display = "none";
+    if ($("patientsTableContainer")) $("patientsTableContainer").style.display = "block";
 }
 
-// Create patient
-export async function createNewPatient(data) {
-  const res = await createPatient(data);
-  if (res.ok) {
-    showAlert("Patient added successfully!");
-    resetForm();
-    loadPatients();
-  }
-}
-
-// Edit patient
 export async function editPatient(id) {
-  const patient = await getPatientById(id);
-
-  setState({ editingId: id });
-  fillForm(patient);
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
+    const patient = await getPatientById(id);
+    if (patient) {
+        setState({ editingId: id });
+        fillForm(patient);
+        if ($("assignedDoctor")) {
+            $("assignedDoctor").value = patient.assigned_doctor || "";
+        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 }
 
-// Update patient
-export async function updateExistingPatient(id, data) {
-  const res = await updatePatient(id, data);
-  if (res.ok) {
-    showAlert("Patient details updated!");
-    resetForm();
-    setState({ editingId: null });
-    loadPatients();
-  }
-}
-
-// Delete patient
 export async function deletePatientAction(id) {
-  if (!confirm("Delete this patient?")) return;
+    if (!confirm("Are you sure you want to delete this patient?")) return;
+    const res = await deletePatient(id);
+    if (res.ok) { 
+        showAlert("Patient deleted!"); 
+        loadPatients(); 
+    }
+}
 
-  const res = await deletePatient(id);
-  if (res.ok) {
-    showAlert("Patient deleted!");
+function finishPatientAction() {
+    setState({ editingId: null });
+    resetForm();
     loadPatients();
-  }
 }

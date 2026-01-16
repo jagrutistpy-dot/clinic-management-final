@@ -1,3 +1,4 @@
+# database/patient_queries.py
 from datetime import datetime
 from .connection import get_connection
 
@@ -17,8 +18,8 @@ def db_create(data):
     conn = get_connection()
     now = datetime.now().isoformat()
     cur = conn.execute(
-        "INSERT INTO patients (name, age, gender, contact, created_at) VALUES (?, ?, ?, ?, ?)",
-        (data["name"], data["age"], data["gender"], data["contact"], now)
+        "INSERT INTO patients (name, age, gender, contact, assigned_doctor, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+        (data["name"], data["age"], data["gender"], data["contact"], data.get("assigned_doctor"), now)
     )
     conn.commit()
     new_id = cur.lastrowid
@@ -27,20 +28,18 @@ def db_create(data):
 
 def db_update(patient_id, data):
     conn = get_connection()
-    now = datetime.today().isoformat()
+    now = datetime.now().isoformat()
     conn.execute("""
-        UPDATE patients SET name=?, age=?, gender=?, contact=?, updated_at=?
+        UPDATE patients SET name=?, age=?, gender=?, contact=?, assigned_doctor=?, updated_at=?
         WHERE id=?
-    """, (data["name"], data["age"], data["gender"], data["contact"], now, patient_id))
+    """, (data["name"], data["age"], data["gender"], data["contact"], data.get("assigned_doctor"), now, patient_id))
     conn.commit()
     conn.close()
     return db_get_one(patient_id)
 
 def db_delete(patient_id):
     patient = db_get_one(patient_id)
-    if not patient:
-        return None
-    
+    if not patient: return None
     conn = get_connection()
     conn.execute("DELETE FROM patients WHERE id=?", (patient_id,))
     conn.commit()

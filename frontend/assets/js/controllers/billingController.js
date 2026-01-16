@@ -1,104 +1,73 @@
-// billingController.js
-
-import {
-  getAllBills,
-  getBillById,
-  createBill,
-  updateBill,
-  deleteBill
-} from "../services/billingService.js";
-
+import { getAllBills, getBillById, createBill, updateBill, deleteBill } from "../services/billingService.js";
+import { getAllPatients } from "../services/patientService.js";
 import { showAlert } from "../components/Alert.js";
 import { renderBillingTable } from "../components/BillingTable.js";
 import { resetForm, fillForm } from "../components/BillingForm.js";
-
 import { setState, getState } from "../state/store.js";
 import { $ } from "../utils/dom.js";
 
-// Initialize billing controller
-export function initBillingController() {
-  // Load all billing records on page load
-  loadBills();
+export async function initBillingController() {
+    await loadInitialBillingData();
 
-  // Handle form submission
-  $("billingForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+    // Autofill Doctor Name when Patient is selected
+    const dropdown = $("patientId");
+    if (dropdown) {
+        dropdown.onchange = (e) => {
+            const patients = getState().patients;
+            const patient = patients.find(p => p.id == e.target.value);
+            if (patient) {
+                $("doctorAttended").value = patient.assigned_doctor || "No Doctor Assigned";
+            }
+        };
+    }
 
-    const data = {
-      patientId: $("patientId").value.trim(),
-      doctorAttended: $("doctorAttended").value.trim(),
-      amount: $("amount").value.trim(),
-      billDate: $("billDate").value.trim()
+    $("billingForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const data = {
+            patient_id: $("patientId").value,
+            doctor_attended: $("doctorAttended").value,
+            amount: $("amount").value.trim(),
+            bill_date: $("billDate").value
+        };
+        const { editingId } = getState();
+        const res = editingId ? await updateBill(editingId, data) : await createBill(data);
+        if (res.ok) { showAlert("Success!"); finishBillingAction(); }
     };
-
-    const { editingId } = getState();
-
-    editingId
-      ? await updateExistingBill(editingId, data)
-      : await createNewBill(data);
-  });
-
-  // Handle cancel button
-  $("cancelBtn").addEventListener("click", () => {
-    setState({ editingId: null });
-    resetForm();
-  });
 }
 
-// Load all billing records
+async function loadInitialBillingData() {
+    const patients = await getAllPatients();
+    setState({ patients });
+    const dropdown = $("patientId");
+    if (dropdown) {
+        dropdown.innerHTML = '<option value="" disabled selected>Select Patient ID</option>';
+        patients.forEach(p => dropdown.innerHTML += `<option value="${p.id}">${p.id} - ${p.name}</option>`);
+    }
+    await loadBills();
+}
+
 export async function loadBills() {
-  const spinner = $("loadingSpinner");
-  const table = $("billingTableContainer");
-
-  spinner.style.display = "block";
-  table.style.display = "none";
-
-  const bills = await getAllBills();
-  setState({ bills });
-  renderBillingTable(bills);
-
-  spinner.style.display = "none";
-  table.style.display = "block";
+    const bills = await getAllBills();
+    renderBillingTable(bills);
+    if ($("loadingSpinner")) $("loadingSpinner").style.display = "none";
+    if ($("billingTableContainer")) $("billingTableContainer").style.display = "block";
 }
 
-// Create new bill
-export async function createNewBill(data) {
-  const res = await createBill(data);
-  if (res.ok) {
-    showAlert("Bill created successfully!");
-    resetForm();
-    loadBills();
-  }
-}
-
-// Edit bill
+// REQUIRED: Must be exported for BillingTable.js
 export async function editBill(id) {
-  const bill = await getBillById(id);
-
-  setState({ editingId: id });
-  fillForm(bill);
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
+    const bill = await getBillById(id);
+    if (bill) { setState({ editingId: id }); fillForm(bill); }
 }
 
-// Update bill
-export async function updateExistingBill(id, data) {
-  const res = await updateBill(id, data);
-  if (res.ok) {
-    showAlert("Bill updated successfully!");
-    resetForm();
-    setState({ editingId: null });
-    loadBills();
-  }
-}
-
-// Delete bill
+// REQUIRED: Must be exported for BillingTable.js
 export async function deleteBillAction(id) {
-  if (!confirm("Delete this bill?")) return;
+    if (!confirm("Delete bill?")) return;
+    const res = await deleteBill(id);
+    if (res.ok) { showAlert("Deleted!"); loadBills(); }
+}
 
-  const res = await deleteBill(id);
-  if (res.ok) {
-    showAlert("Bill deleted!");
+function finishBillingAction() {
+    setState({ editingId: null });
+    resetForm();
     loadBills();
-  }
 }

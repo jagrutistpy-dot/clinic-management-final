@@ -46,6 +46,16 @@ def init_database():
         )
     """)
 
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS patients (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT, age INTEGER, gender TEXT, contact TEXT,
+        assigned_doctor_id INTEGER,
+        created_at TEXT, updated_at TEXT,
+        FOREIGN KEY(assigned_doctor_id) REFERENCES doctors(id)
+    )
+""")
+
     conn.commit()
     conn.close()
-    print("[OK] Database initialized")
+    print("Database initialized")

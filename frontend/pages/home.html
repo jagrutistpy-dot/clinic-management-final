@@ -1,32 +1,22 @@
 <div class="max-w-2xl mx-auto p-6">
-
-  <h1 class="text-3xl font-bold mb-4 text-gray-800">Welcome</h1>
-
-  <p class="text-gray-600 mb-8 leading-relaxed">
-    Welcome to the Clinic Management System.<br>
-    Choose what you want to manage:
-  </p>
-
-  <div class="space-y-4">
-
-    <!-- DOCTORS -->
-    <a href="/doctors" data-link
-      class="block w-full px-4 py-3 text-center border border-gray-300 rounded hover:bg-gray-200 transition flex items-center justify-center gap-2">
-      <i class="fa-solid fa-user-doctor"></i>
-      Doctor Management (UI)
+  <h1 class="text-3xl font-bold mb-4 text-gray-800 text-center">Clinic Management System</h1>
+  <p class="text-gray-600 mb-8 leading-relaxed text-center">Welcome to the clinic dashboard. Choose what you want to manage:</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <a href="/doctors" data-link class="p-6 text-center border rounded-xl hover:bg-blue-50 transition shadow-sm flex flex-col items-center gap-3">
+      <i class="fa-solid fa-user-doctor text-2xl text-blue-500"></i>
+      <span class="font-semibold">Doctor Management</span>
     </a>
-
-    <a href="/api/doctors" target="_blank"
-      class="block w-full px-4 py-3 text-center border border-gray-300 rounded hover:bg-gray-200 transition flex items-center justify-center gap-2">
-      <i class="fa-solid fa-code"></i>
-      Doctor API (JSON)
+    <a href="/patients" data-link class="p-6 text-center border rounded-xl hover:bg-green-50 transition shadow-sm flex flex-col items-center gap-3">
+      <i class="fa-solid fa-hospital-user text-2xl text-green-500"></i>
+      <span class="font-semibold">Patient Management</span>
     </a>
-
-    <!-- PATIENTS -->
-    <a href="/patients" data-link
-      class="block w-full px-4 py-3 text-center border border-gray-300 rounded hover:bg-gray-200 transition flex items-center justify-center gap-2">
-      <i class="fa-solid fa-bed-pulse"></i>
-      Patient Management (UI)
+    <a href="/billing" data-link class="p-6 text-center border rounded-xl hover:bg-purple-50 transition shadow-sm flex flex-col items-center gap-3">
+      <i class="fa-solid fa-file-invoice-dollar text-2xl text-purple-500"></i>
+      <span class="font-semibold">Billing & Payments</span>
     </a>
-
-    <a href="/api/patients"
+    <a href="/reports" data-link class="p-6 text-center border rounded-xl hover:bg-orange-50 transition shadow-sm flex flex-col items-center gap-3">
+      <i class="fa-solid fa-chart-line text-2xl text-orange-500"></i>
+      <span class="font-semibold">Full Clinic Report</span>
+    </a>
+  </div>
+</div>

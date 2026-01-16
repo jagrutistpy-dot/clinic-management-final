@@ -3,6 +3,8 @@
 import { initDoctorController } from "../controllers/doctorController.js";
 import { initPatientController } from "../controllers/patientController.js";
 import { initBillingController } from "../controllers/billingController.js";
+// Import the new report controller
+import { initReportController } from "../controllers/reportController.js"; 
 
 async function loadView(path) {
   const res = await fetch(path);
@@ -46,6 +48,10 @@ export async function router() {
   } else if (path === "/billing") {
     await loadView("/frontend/pages/billing.html");
     initBillingController();
+
+  } else if (path === "/reports") { // Added route for the Full Merged Table
+    await loadView("/frontend/pages/reports.html");
+    initReportController(); // Initialize the merged report logic
 
   } else if (path === "/docs/flow") {
     await loadView("/frontend/pages/flow.html");

@@ -1,8 +1,10 @@
+let currentDoctors = []; // To store doctors for the edit dropdown
+
 const loadDoctorsList = async () => {
     const res = await fetch('/api/doctors');
-    const docs = await res.json();
+    currentDoctors = await res.json();
     document.getElementById('p_docid').innerHTML = '<option value="">Select Doctor</option>' + 
-        docs.map(d => `<option value="${d[0]}">ID: ${d[0]} - Dr. ${d[1]}</option>`).join('');
+        currentDoctors.map(d => `<option value="${d[0]}">ID: ${d[0]} - Dr. ${d[1]}</option>`).join('');
 };
 
 const loadPatients = async () => {
@@ -10,8 +12,54 @@ const loadPatients = async () => {
     const data = await res.json();
     const tbody = document.querySelector('#patTable tbody');
     tbody.innerHTML = data.map(p => `
-        <tr><td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td><td>${p[3]}</td><td>${p[4]}</td>
-        <td><button class="btn-del" onclick="deletePatient(${p[0]})">Delete</button></td></tr>`).join('');
+        <tr id="pat-row-${p[0]}">
+            <td>${p[0]}</td>
+            <td class="cell-name">${p[1]}</td>
+            <td class="cell-contact">${p[2]}</td>
+            <td class="cell-date">${p[3]}</td>
+            <td class="cell-docid">${p[4]}</td>
+            <td>
+                <button class="btn-edit" onclick="editPatient(${p[0]})" style="background: #ffc107; color: black; margin-right:5px;">Edit</button>
+                <button class="btn-del" onclick="deletePatient(${p[0]})" style="background: #dc3545; color: white;">Delete</button>
+            </td>
+        </tr>`).join('');
+};
+
+// --- Update Logic: Edit Mode ---
+const editPatient = (id) => {
+    const row = document.getElementById(`pat-row-${id}`);
+    const name = row.querySelector('.cell-name').innerText;
+    const contact = row.querySelector('.cell-contact').innerText;
+    const date = row.querySelector('.cell-date').innerText;
+    const docId = row.querySelector('.cell-docid').innerText;
+
+    row.innerHTML = `
+        <td>${id}</td>
+        <td><input type="text" id="edit-pname-${id}" value="${name}"></td>
+        <td><input type="text" id="edit-pcontact-${id}" value="${contact}"></td>
+        <td><input type="date" id="edit-pdate-${id}" value="${date}"></td>
+        <td>
+            <select id="edit-pdoc-${id}">
+                ${currentDoctors.map(d => `<option value="${d[0]}" ${d[0] == docId ? 'selected' : ''}>ID: ${d[0]}</option>`).join('')}
+            </select>
+        </td>
+        <td>
+            <button onclick="savePatientEdit(${id})" style="background: #28a745; color: white;">Save</button>
+            <button onclick="loadPatients()" style="background: #6c757d; color: white;">Cancel</button>
+        </td>`;
+};
+
+const savePatientEdit = async (id) => {
+    const payload = {
+        action: 'update',
+        id: id,
+        name: document.getElementById(`edit-pname-${id}`).value,
+        contact: document.getElementById(`edit-pcontact-${id}`).value,
+        date: document.getElementById(`edit-pdate-${id}`).value,
+        doc_id: document.getElementById(`edit-pdoc-${id}`).value
+    };
+    await fetch('/api/patients', { method: 'POST', body: JSON.stringify(payload) });
+    loadPatients();
 };
 
 const sortTable = (tableId, colIndex) => {
@@ -44,11 +92,7 @@ document.getElementById('patForm').onsubmit = async (e) => {
 };
 
 const deletePatient = async (id) => {
-    // Confirmation removed
-    await fetch('/api/patients', { 
-        method: 'POST', 
-        body: JSON.stringify({action: 'delete', id}) 
-    });
+    await fetch('/api/patients', { method: 'POST', body: JSON.stringify({action: 'delete', id}) });
     loadPatients();
 };
 

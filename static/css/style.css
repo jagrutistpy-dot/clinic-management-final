@@ -18,6 +18,11 @@ footer { text-align: center; padding: 20px; margin-top: 40px; border-top: 1px so
     nav, button, form, footer, .no-print {
         display: none !important;
     }
+    .btn-edit {
+    background-color: #ffc107;
+    color: black;
+    margin-right: 5px;
+    }
     .container {
         box-shadow: none;
         margin: 0;

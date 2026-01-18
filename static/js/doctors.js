@@ -2,14 +2,55 @@ const loadDoctors = async () => {
     const res = await fetch('/api/doctors');
     const data = await res.json();
     const tbody = document.querySelector('#docTable tbody');
+    // We add a unique ID to each row so we can target it for editing
     tbody.innerHTML = data.map(d => `
-        <tr>
+        <tr id="row-${d[0]}">
             <td>${d[0]}</td>
-            <td>${d[1]}</td>
-            <td>${d[2]}</td>
-            <td>${d[3]}</td>
-            <td><button class="btn-del" onclick="deleteDoc(${d[0]})">Delete</button></td>
+            <td class="cell-name">${d[1]}</td>
+            <td class="cell-spec">${d[2]}</td>
+            <td class="cell-contact">${d[3]}</td>
+            <td>
+                <button class="btn-edit" onclick="editRow(${d[0]})">Edit</button>
+                <button class="btn-del" onclick="deleteDoc(${d[0]})">Delete</button>
+            </td>
         </tr>`).join('');
+};
+
+// Function to switch a row into "Edit Mode"
+const editRow = (id) => {
+    const row = document.getElementById(`row-${id}`);
+    const name = row.querySelector('.cell-name').innerText;
+    const spec = row.querySelector('.cell-spec').innerText;
+    const contact = row.querySelector('.cell-contact').innerText;
+
+    // Replace table text with input fields
+    row.innerHTML = `
+        <td>${id}</td>
+        <td><input type="text" id="edit-name-${id}" value="${name}" style="width:100%"></td>
+        <td><input type="text" id="edit-spec-${id}" value="${spec}" style="width:100%"></td>
+        <td><input type="text" id="edit-contact-${id}" value="${contact}" style="width:100%"></td>
+        <td>
+            <button onclick="saveRow(${id})" style="background: #28a745; color: white;">Save</button>
+            <button onclick="loadDoctors()" style="background: #6c757d; color: white;">Cancel</button>
+        </td>`;
+};
+
+// Function to send the updated data to the Python backend
+const saveRow = async (id) => {
+    const payload = {
+        action: 'update',
+        id: id,
+        name: document.getElementById(`edit-name-${id}`).value,
+        spec: document.getElementById(`edit-spec-${id}`).value,
+        contact: document.getElementById(`edit-contact-${id}`).value
+    };
+
+    await fetch('/api/doctors', { 
+        method: 'POST', 
+        body: JSON.stringify(payload) 
+    });
+    
+    loadDoctors(); // Refresh the table
 };
 
 const sortTable = (colIndex) => {
@@ -34,6 +75,7 @@ const exportToCSV = (tableId) => {
     let csv = [];
     const rows = document.querySelectorAll(`#${tableId} tr`);
     for (const row of rows) {
+        // We slice(0, -1) to exclude the "Action" column from the CSV
         const cols = Array.from(row.querySelectorAll("td, th")).slice(0, -1);
         csv.push(cols.map(c => c.innerText).join(","));
     }
@@ -57,7 +99,6 @@ document.getElementById('docForm').onsubmit = async (e) => {
 };
 
 const deleteDoc = async (id) => {
-    // Confirmation removed
     await fetch('/api/doctors', { 
         method: 'POST', 
         body: JSON.stringify({action: 'delete', id}) 

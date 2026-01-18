@@ -13,10 +13,12 @@ const loadReport = async () => {
 };
 
 const deleteEntry = async (id) => {
-    if(confirm("Remove from report?")) {
-        await fetch('/api/billing', { method: 'POST', body: JSON.stringify({action: 'delete', id}) });
-        loadReport();
-    }
+    // Confirmation removed
+    await fetch('/api/billing', { 
+        method: 'POST', 
+        body: JSON.stringify({action: 'delete', id}) 
+    });
+    loadReport();
 };
 
 const exportCSV = () => {

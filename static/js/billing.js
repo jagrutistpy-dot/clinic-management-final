@@ -58,10 +58,12 @@ document.getElementById('billForm').onsubmit = async (e) => {
 };
 
 const deleteBill = async (id) => {
-    if(confirm("Confirm deletion?")) {
-        await fetch('/api/billing', { method: 'POST', body: JSON.stringify({action: 'delete', id}) });
-        loadBillTable();
-    }
+    // Confirmation removed
+    await fetch('/api/billing', { 
+        method: 'POST', 
+        body: JSON.stringify({action: 'delete', id}) 
+    });
+    loadBillTable();
 };
 
 window.onload = () => { loadDataForDropdowns(); loadBillTable(); };

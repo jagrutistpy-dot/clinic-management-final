@@ -57,10 +57,12 @@ document.getElementById('docForm').onsubmit = async (e) => {
 };
 
 const deleteDoc = async (id) => {
-    if(confirm("Delete Doctor?")) {
-        await fetch('/api/doctors', { method: 'POST', body: JSON.stringify({action: 'delete', id}) });
-        loadDoctors();
-    }
+    // Confirmation removed
+    await fetch('/api/doctors', { 
+        method: 'POST', 
+        body: JSON.stringify({action: 'delete', id}) 
+    });
+    loadDoctors();
 };
 
 window.onload = loadDoctors;

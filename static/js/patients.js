@@ -44,10 +44,12 @@ document.getElementById('patForm').onsubmit = async (e) => {
 };
 
 const deletePatient = async (id) => {
-    if(confirm("Confirm deletion?")) {
-        await fetch('/api/patients', { method: 'POST', body: JSON.stringify({action: 'delete', id}) });
-        loadPatients();
-    }
+    // Confirmation removed
+    await fetch('/api/patients', { 
+        method: 'POST', 
+        body: JSON.stringify({action: 'delete', id}) 
+    });
+    loadPatients();
 };
 
 const exportToCSV = (tableId) => {

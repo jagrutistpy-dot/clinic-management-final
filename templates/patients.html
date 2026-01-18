@@ -7,11 +7,9 @@
 </head>
 <body>
     <nav>
-        <a href="/">Home</a>
-        <a href="/doctors.html">Doctors</a>
+        <a href="/">Home</a><a href="/doctors.html">Doctors</a>
         <a href="/patients.html" style="text-decoration: underline;">Patients</a>
-        <a href="/billing.html">Billing</a>
-        <a href="/reports.html">Reports</a>
+        <a href="/billing.html">Billing</a><a href="/reports.html">Reports</a>
     </nav>
     <div class="container">
         <h2>Register New Patient</h2>
@@ -19,27 +17,18 @@
             <input type="text" id="p_name" placeholder="Patient Name" required>
             <input type="text" id="p_contact" placeholder="Contact Number" required>
             <input type="date" id="p_date" required>
-            <select id="p_docid" required>
-                <option value="">Select Available Doctor</option>
-            </select>
+            <select id="p_docid" required><option value="">Select Doctor</option></select>
             <button type="submit">Add Patient</button>
         </form>
 
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3>Patient Records</h3>
-            <button class="export-btn" onclick="exportToCSV('patTable')">Export to CSV</button>
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button onclick="sortTable('patTable', 1)">Sort By Name</button>
+            <button class="export-btn" onclick="exportToCSV('patTable')" style="margin-left:auto;">Export CSV</button>
         </div>
 
         <table id="patTable">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Contact</th>
-                    <th>Visit Date</th>
-                    <th>Doctor ID</th>
-                    <th>Actions</th>
-                </tr>
+                <tr><th>ID</th><th>Name</th><th>Contact</th><th>Visit Date</th><th>Doctor ID</th><th>Actions</th></tr>
             </thead>
             <tbody></tbody>
         </table>

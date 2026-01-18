@@ -14,3 +14,19 @@ table { width: 100%; border-collapse: collapse; margin-top: 10px; }
 th, td { border: 1px solid #eee; padding: 12px; text-align: left; }
 th { background: #f8f9fa; }
 footer { text-align: center; padding: 20px; margin-top: 40px; border-top: 1px solid #ddd; font-weight: bold; }
+
+/* This hides everything except the table when printing/saving to PDF */
+@media print {
+    nav, button, form, footer, .export-btn, .no-print {
+        display: none !important;
+    }
+    .container {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+    table {
+        border: 1px solid #000;
+    }
+}

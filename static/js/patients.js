@@ -1,4 +1,4 @@
-let currentDoctors = []; // To store doctors for the edit dropdown
+let currentDoctors = []; 
 
 const loadDoctorsList = async () => {
     const res = await fetch('/api/doctors');
@@ -25,7 +25,6 @@ const loadPatients = async () => {
         </tr>`).join('');
 };
 
-// --- Update Logic: Edit Mode ---
 const editPatient = (id) => {
     const row = document.getElementById(`pat-row-${id}`);
     const name = row.querySelector('.cell-name').innerText;
@@ -60,6 +59,20 @@ const savePatientEdit = async (id) => {
     };
     await fetch('/api/patients', { method: 'POST', body: JSON.stringify(payload) });
     loadPatients();
+};
+
+const downloadPatientsPDF = () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text("Clinic Management System - Patient Records", 14, 15);
+    
+    doc.autoTable({ 
+        html: '#patTable',
+        startY: 20,
+        columnStyles: { 5: { display: 'none' } } // Hide Actions column
+    });
+
+    doc.save('Patients_Report.pdf');
 };
 
 const sortTable = (tableId, colIndex) => {

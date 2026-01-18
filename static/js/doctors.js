@@ -69,7 +69,21 @@ const sortTable = (colIndex) => {
     rows.forEach(row => tbody.appendChild(row));
 };
 
-const exportToPDF = () => { window.print(); };
+const downloadDoctorsPDF = () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    doc.text("Clinic Management System - Doctors List", 14, 15);
+    
+    doc.autoTable({ 
+        html: '#docTable',
+        startY: 20,
+        // Column 4 is the "Action" column which we hide in the PDF
+        columnStyles: { 4: { display: 'none' } } 
+    });
+
+    doc.save('Doctors_Report.pdf');
+};
 
 const exportToCSV = (tableId) => {
     let csv = [];

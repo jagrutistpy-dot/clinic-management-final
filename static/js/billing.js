@@ -31,13 +31,28 @@ const loadBillTable = async () => {
             <td class="cell-contact">${b[3]}</td>
             <td class="cell-amount">${b[4]}</td>
             <td>
-                <button class="btn-edit" onclick="editBill(${b[0]})" style="background: #ffc107; color: black;">Edit</button>
+                <button class="btn-edit" onclick="editBill(${b[0]})" style="background: #ffc107; color: black; margin-right:5px;">Edit</button>
                 <button class="btn-del" onclick="deleteBill(${b[0]})" style="background: #dc3545; color: white;">Delete</button>
             </td>
         </tr>`).join('');
 };
 
-// --- Update Logic: Edit Mode ---
+// --- PDF DOWNLOAD FEATURE ---
+const downloadBillingPDF = () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text("Clinic Management System - Billing History", 14, 15);
+    
+    doc.autoTable({ 
+        html: '#billTable',
+        startY: 20,
+        columnStyles: { 5: { display: 'none' } } // Hide Actions column
+    });
+
+    doc.save('Billing_History_Report.pdf');
+};
+
+// --- UPDATE LOGIC: EDIT MODE ---
 const editBill = (id) => {
     const row = document.getElementById(`bill-row-${id}`);
     const currentName = row.querySelector('.cell-name').innerText;
@@ -84,7 +99,7 @@ const saveEdit = async (id) => {
     loadBillTable();
 };
 
-// --- Sorting Logic ---
+// --- SORTING AND OTHER CRUD ---
 const sortTable = (tableId, colIndex) => {
     const table = document.getElementById(tableId);
     const tbody = table.tBodies[0];
@@ -104,26 +119,18 @@ const sortTable = (tableId, colIndex) => {
     rows.forEach(row => tbody.appendChild(row));
 };
 
-// --- Create Logic ---
 document.getElementById('billForm').onsubmit = async (e) => {
     e.preventDefault();
     const payload = {
-        p_name: document.getElementById('bn').value, 
-        d_id: document.getElementById('bd').value,
-        contact: document.getElementById('bc').value, 
-        amount: document.getElementById('ba').value
+        p_name: document.getElementById('bn').value, d_id: document.getElementById('bd').value,
+        contact: document.getElementById('bc').value, amount: document.getElementById('ba').value
     };
     await fetch('/api/billing', { method: 'POST', body: JSON.stringify(payload) });
-    loadBillTable(); 
-    e.target.reset();
+    loadBillTable(); e.target.reset();
 };
 
-// --- Delete Logic ---
 const deleteBill = async (id) => {
-    await fetch('/api/billing', { 
-        method: 'POST', 
-        body: JSON.stringify({action: 'delete', id}) 
-    });
+    await fetch('/api/billing', { method: 'POST', body: JSON.stringify({action: 'delete', id}) });
     loadBillTable();
 };
 

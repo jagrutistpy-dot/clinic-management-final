@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><link rel="stylesheet" href="/static/css/style.css"></head>
+<body>
+    <nav><a href="/">Home</a><a href="/doctors.html">Doctors</a><a href="/patients.html">Patients</a></nav>
+    <div class="container">
+        <h2>Doctor Management</h2>
+        <form id="docForm">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="text" id="spec" placeholder="Specialization" required>
+            <input type="text" id="contact" placeholder="Contact" required>
+            <button type="submit">Add Doctor</button>
+        </form>
+        <button class="export-btn" onclick="exportToCSV('docTable')">Export to CSV</button>
+        <table id="docTable">
+            <thead><tr><th>ID</th><th>Name</th><th>Spec</th><th>Contact</th><th>Action</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script src="/static/js/doctors.js"></script>
+    <footer>Build with Jagrurati Satapathy</footer>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><link rel="stylesheet" href="/static/css/style.css"></head>
+<body>
+    <nav><a href="/">Home</a><a href="/templates/reports.html">Reports</a></nav>
+    <div class="container">
+        <h2>Clinic Reports</h2>
+        <button onclick="exportCSV()">Export CSV</button>
+        <table id="reportTable">
+            <thead><tr><th>P-ID</th><th>Name</th><th>Bill</th><th>Contact</th><th>Doc ID</th><th>Action</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script src="/static/js/reports.js"></script>
+    <footer>Build with Jagrurati Satapathy</footer>
+</body>
+</html>

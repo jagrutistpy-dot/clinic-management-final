@@ -11,6 +11,7 @@ const loadReport = async () => {
             <td>${b[3]}</td>
             <td>D-${b[2]}</td>
             <td class="no-print">
+                <button class="btn-view" onclick="window.location='/report_view.html?bill_id=${b[0]}'" style="background:#007bff;color:white;margin-right:8px;">View</button>
                 <button class="btn-del" onclick="deleteReportEntry(${b[0]})" style="background: #dc3545; color: white;">Delete</button>
             </td>
         </tr>`).join('');

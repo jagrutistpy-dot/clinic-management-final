@@ -343,50 +343,97 @@ This level provides further decomposition of the sub-processes in Level 1 into f
 graph LR
     CS["👥 Clinic Staff"]
     
-    subgraph P1["P1: Doctor"]
-        P1_CRUD["Add/Edit/Delete"]
+    subgraph P1["P1: DOCTOR MANAGEMENT"]
+        P1_1["P1.1: Add Doctor<br/>(INSERT)"]
+        P1_2["P1.2: Edit Doctor<br/>(UPDATE)"]
+        P1_3["P1.3: Delete Doctor<br/>(DELETE)"]
     end
     
-    subgraph P2["P2: Patient"]
-        P2_CRUD["Register/Edit/Delete"]
+    subgraph P2["P2: PATIENT MANAGEMENT"]
+        P2_1["P2.1: Register Patient<br/>(INSERT)"]
+        P2_2["P2.2: Edit Patient<br/>(UPDATE)"]
+        P2_3["P2.3: Delete Patient<br/>(DELETE)"]
     end
     
-    subgraph P3["P3: Billing"]
-        P3_CRUD["Create/Edit/Delete"]
+    subgraph P3["P3: BILLING MANAGEMENT"]
+        P3_1["P3.1: Create Bill<br/>(INSERT)"]
+        P3_2["P3.2: Update Bill<br/>(UPDATE)"]
+        P3_3["P3.3: Delete Bill<br/>(DELETE)"]
     end
     
-    subgraph P4["P4: Export"]
-        P4_CRUD["Query → Format → Download"]
+    subgraph P4["P4: REPORTING & EXPORT"]
+        P4_1["P4.1: Query Data<br/>(SELECT)"]
+        P4_2["P4.2: Format Output<br/>(Convert)"]
+        P4_3["P4.3: Send Download<br/>(Output)"]
     end
     
-    D1[("D1: Doctors")]
-    D2[("D2: Patients")]
-    D3[("D3: Billing")]
+    D1[("D1: Doctors<br/>Table")]
+    D2[("D2: Patients<br/>Table")]
+    D3[("D3: Billing<br/>Table")]
     
-    OUT["📊 PDF/CSV"]
+    P5["P5: PDF Export<br/>(jsPDF)"]
+    P6["P6: CSV Export<br/>(Native JS)"]
     
-    CS -->|Data| P1_CRUD & P2_CRUD & P3_CRUD & P4_CRUD
+    EXP["📊 External<br/>Systems"]
     
-    P1_CRUD --> D1
-    P2_CRUD --> D1
-    P2_CRUD --> D2
-    P3_CRUD --> D1
-    P3_CRUD --> D2
-    P3_CRUD --> D3
+    CS -->|Form Data| P1_1
+    CS -->|Form Data| P2_1
+    CS -->|Form Data| P3_1
+    CS -->|Report Request| P4_1
     
-    D1 & D2 & D3 -->|Query| P4_CRUD
-    P4_CRUD --> OUT
+    P1_1 --> D1
+    P1_2 --> D1
+    P1_3 --> D1
+    
+    P2_1 -->|Verify Doctor ID| D1
+    P2_1 --> D2
+    P2_2 --> D2
+    P2_3 --> D2
+    
+    P3_1 -->|Verify Doctor ID| D1
+    P3_1 -->|Verify Patient| D2
+    P3_1 --> D3
+    P3_2 --> D3
+    P3_3 --> D3
+    
+    D1 -->|Query| P4_1
+    D2 -->|Query| P4_1
+    D3 -->|Query| P4_1
+    
+    P4_1 -->|Raw Data| P4_2
+    P4_2 -->|Formatted| P5
+    P4_2 -->|Formatted| P6
+    
+    P5 -->|Download Link| P4_3
+    P6 -->|Download Link| P4_3
+    
+    P4_3 -->|PDF/CSV| EXP
     
     style P1 fill:#4A90E2,color:#fff
     style P2 fill:#4A90E2,color:#fff
     style P3 fill:#4A90E2,color:#fff
     style P4 fill:#4A90E2,color:#fff
+    style P1_1 fill:#357ABD,color:#fff
+    style P1_2 fill:#357ABD,color:#fff
+    style P1_3 fill:#357ABD,color:#fff
+    style P2_1 fill:#357ABD,color:#fff
+    style P2_2 fill:#357ABD,color:#fff
+    style P2_3 fill:#357ABD,color:#fff
+    style P3_1 fill:#357ABD,color:#fff
+    style P3_2 fill:#357ABD,color:#fff
+    style P3_3 fill:#357ABD,color:#fff
+    style P4_1 fill:#357ABD,color:#fff
+    style P4_2 fill:#357ABD,color:#fff
+    style P4_3 fill:#357ABD,color:#fff
     style D1 fill:#F5A623,color:#fff
     style D2 fill:#F5A623,color:#fff
     style D3 fill:#F5A623,color:#fff
+    style P5 fill:#50E3C2,color:#fff
+    style P6 fill:#50E3C2,color:#fff
     style CS fill:#7ED321,color:#fff
-    style OUT fill:#50E3C2,color:#fff
+    style EXP fill:#9013FE,color:#fff
 ```
+
 
 **Detailed Data Flows in Level 2:**
 - **F1.1**: Doctor form → P1.1 (Validate) → SQL INSERT → D1

@@ -1,3 +1,4 @@
+// Project file: static/js/patients.js — frontend logic for patient management page; interacts with /api/patients and /api/doctors
 let currentDoctors = []; 
 
 const loadDoctorsList = async () => {

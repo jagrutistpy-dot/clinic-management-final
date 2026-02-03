@@ -1,3 +1,4 @@
+# Project file: README.md — overview, quick start, and architecture notes for the LifeCare app
 # LifeCare Clinic Management System
 
 A lightweight, web-based clinic management system for handling doctors, patients, and billing operations. Built with Python HTTP server, SQLite database, and vanilla JavaScript frontend.

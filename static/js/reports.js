@@ -1,3 +1,4 @@
+//  frontend logic for reports summary page; queries /api/billing
 const loadReport = async () => {
     const res = await fetch('/api/billing');
     const data = await res.json();

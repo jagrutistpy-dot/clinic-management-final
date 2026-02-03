@@ -1,3 +1,4 @@
+# Project file: database.py — initializes SQLite DB and handles API data requests used by `app.py`
 import sqlite3
 
 def init_db():

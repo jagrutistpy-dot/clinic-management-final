@@ -1,3 +1,4 @@
+// Project file: static/js/billing.js — frontend logic for billing page; uses /api/patients, /api/doctors, /api/billing
 let globalPatients = [];
 let globalDoctors = [];
 

@@ -1,3 +1,4 @@
+# Project file: app.py — main HTTP server and router; serves templates and exposes /api/ endpoints handled by `database.py`
 import http.server
 import socketserver
 import json

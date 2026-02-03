@@ -1,3 +1,4 @@
+// Project file: static/js/doctors.js — frontend logic for doctor management page; calls /api/doctors
 const loadDoctors = async () => {
     const res = await fetch('/api/doctors');
     const data = await res.json();

@@ -1,3 +1,4 @@
+// Project file: static/js/report_view.js — frontend logic to display a single billing report; reads query param `bill_id` and fetches data from APIs
 const qs = (k) => new URLSearchParams(window.location.search).get(k);
 
 const loadReportDetails = async () => {
